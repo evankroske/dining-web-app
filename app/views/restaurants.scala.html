@@ -1,0 +1,9 @@
+@(restaurants: List[models.Restaurant])
+
+@main("Restaurants") {
+<ul>
+	@restaurants.map { r =>
+	<li>@r.name</li>
+	}
+</ul>
+}

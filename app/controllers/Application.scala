@@ -2,6 +2,7 @@ package controllers
 
 import play.api._
 import play.api.mvc._
+import play.api.libs.json._
 import org.bouncycastle.crypto.PBEParametersGenerator.PKCS5PasswordToUTF8Bytes
 import org.bouncycastle.crypto.generators.PKCS5S2ParametersGenerator
 import org.bouncycastle.crypto.params._
@@ -25,6 +26,22 @@ object Application extends Controller {
 	}
 
 	def listRestaurants(fmt: String) = Action {
-		Ok(Restaurant.all().toString())
+		fmt match {
+			case "html" => {
+				Ok(views.html.restaurants(Restaurant.all()))
+			}
+			case "json" => {
+				Ok(
+					Json.toJson(
+						Restaurant.all().map { r =>
+							Json.toJson(Map(
+								"name" -> Json.toJson(r.name),
+								"hours" -> Json.toJson(r.hours.values.toSeq)
+							))
+						}
+					)
+				)
+			}
+		}
 	}
 }
