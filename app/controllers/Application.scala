@@ -6,6 +6,8 @@ import org.bouncycastle.crypto.PBEParametersGenerator.PKCS5PasswordToUTF8Bytes
 import org.bouncycastle.crypto.generators.PKCS5S2ParametersGenerator
 import org.bouncycastle.crypto.params._
 
+import models.Restaurant
+
 object Application extends Controller {
   
   def signup = Action {
@@ -20,5 +22,9 @@ object Application extends Controller {
 
 	def index = Action {
 		Ok("Hello, world!")
+	}
+
+	def listRestaurants(fmt: String) = Action {
+		Ok(Restaurant.all().toString())
 	}
 }
