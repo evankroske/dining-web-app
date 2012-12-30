@@ -1,9 +1,14 @@
-@(restaurants: List[models.Restaurant])
+@(open: List[models.Restaurant], closed: List[models.Restaurant])
 
 @main("Restaurants") {
 <ul>
-	@restaurants.map { r =>
-	<li>@r.name</li>
+	<li><strong>Open:</strong></li>
+	@open.map { r =>
+	<li><a href="@routes.Application.restaurant(r.id)">@r.name</a></li>
+	}
+	<li><strong>Closed:</strong></li>
+	@closed.map { r =>
+	<li><a href="@routes.Application.restaurant(r.id)">@r.name</a></li>
 	}
 </ul>
 }
