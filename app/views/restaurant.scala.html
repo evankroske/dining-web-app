@@ -1,10 +1,28 @@
 @(restaurant: models.Restaurant)
-
-@main(restaurant.name) {
-	<h1>@restaurant.name</h1>
-	<ul>
-	@restaurant.prettyHoursByDay.map { hours =>
-		<li>@hours</li>
-	}
-	</ul>
-}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>@restaurant.name at the University of South Florida</title>
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
+	<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
+</head>
+<body>
+<div data-role="page">
+	<div data-role="header">
+		<a href="/restaurants" data-role="button" data-rel="back" data-icon="arrow-l">Restaurants</a>
+		<h1>@restaurant.name</h1>
+	</div>
+	<div data-role="content">
+		<ul data-role="listview">
+			<li data-role="list-divider">Hours</li>
+		@restaurant.prettyHoursByDay.map { hours =>
+			<li>@hours</li>
+		}
+		</ul>
+	</div>
+</div>
+</body>
+</html>
