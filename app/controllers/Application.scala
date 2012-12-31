@@ -23,7 +23,7 @@ object Application extends Controller {
   }
 
 	def index = Action {
-		Ok("Hello, world!")
+		Redirect(routes.Application.restaurants)
 	}
 
 /*

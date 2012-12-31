@@ -4,8 +4,9 @@
 
 # Home page
 GET	/	controllers.Application.index
-GET	/restaurants	controllers.Application.restaurants
-GET	/restaurant/:id	controllers.Application.restaurant(id: Int)
+GET	/usf	controllers.Application.index
+GET	/usf/restaurants	controllers.Application.restaurants
+GET	/usf/restaurant/:id	controllers.Application.restaurant(id: Int)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
