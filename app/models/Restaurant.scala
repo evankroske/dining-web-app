@@ -91,13 +91,11 @@ case class Restaurant(val id: Int, val name: String, val hours: BitSet, val time
 					(endDay - startDay == 1 && end % numHalfHrs < 6 * 2)) {
 					intervals(startDay % 7) +=
 						((start, Some(end % NUM_HALF_HRS_IN_WEEK)))
-					println("%d %d".format(start, end))
 					start = end
 				}
 				else {
 					val nextDayStart = (start / numHalfHrs + 1) * numHalfHrs
 					intervals(startDay % 7) += ((start, None))
-					println("%d %d".format(start, nextDayStart))
 					start = nextDayStart
 				}
 				while (!hours.contains(start) && start < NUM_HALF_HRS_IN_WEEK) {
