@@ -2,4 +2,9 @@
 
 @main(restaurant.name) {
 	<h1>@restaurant.name</h1>
+	<ul>
+	@restaurant.prettyHoursByDay.map { hours =>
+		<li>@hours</li>
+	}
+	</ul>
 }

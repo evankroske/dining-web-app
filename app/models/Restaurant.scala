@@ -12,28 +12,32 @@ import scala.collection.BitSet
 import scala.collection.mutable.MutableList
 
 case class Restaurant(val id: Int, val name: String, val hours: BitSet, val timeZone: TimeZone) {
+	private val NUM_HALF_HRS_IN_DAY = 48;
+	private val NUM_HALF_HRS_IN_WEEK = 7 * 48
 	private val cal = Calendar.getInstance(timeZone)
+
 	def prettyHoursByDay() = {
 		val dayFormatter = new SimpleDateFormat("EEEE")
 		dayFormatter.setTimeZone(timeZone)
-		val timeFormatter = DateFormat.getTimeInstance()
+		val timeFormatter = new SimpleDateFormat("h:mm a")
 		timeFormatter.setTimeZone(timeZone)
-		hoursByDay().zipWithIndex.map { case (day, i) =>
+		hoursByDay.zipWithIndex.map { case (day, i) =>
 			day match {
 				case List() =>
-					cal.set(Calendar.DAY_OF_WEEK, i)
-					"%s: Closed".format(dayFormatter.format(cal.getTime()))
+					"%s: Closed".format(dayFormatter.format(halfHrIndexToDate(i *
+						NUM_HALF_HRS_IN_DAY)))
 				case intervals @ List((start, end), _*) =>
-					"%s: %s".format(dayFormatter.format(start),
+					"%s: %s".format(
+						dayFormatter.format(
+							halfHrIndexToDate(i * NUM_HALF_HRS_IN_DAY)),
 						intervals.map {
 							case (start, None) =>
-								cal.setTime(start)
 								if (cal.get(Calendar.HOUR_OF_DAY) == 0) "24 hours"
 								else {
-									"%s&ndash;No closing".format(timeFormatter.format(start))
+									"%s–No closing".format(timeFormatter.format(start))
 								}
-							case (start, end) =>
-								"%s&ndash;%s".format(timeFormatter.format(start),
+							case (start, Some(end)) =>
+								"%s–%s".format(timeFormatter.format(start),
 									timeFormatter.format(end))
 						}.mkString(" and ")
 					)
@@ -42,17 +46,24 @@ case class Restaurant(val id: Int, val name: String, val hours: BitSet, val time
 	}
 
 	def hoursByDay() = {
-		intervalsByDay().map { intervals =>
+		intervalsByDay.map { intervals =>
 			intervals.view.map { case (start, end) =>
 				(halfHrIndexToDate(start), end.map(halfHrIndexToDate(_)))
 			}.toList
 		}
 	}
 
-	private def intervalsByDay() = {
-		val intervalsByDay = Array.fill(7)(MutableList[Tuple2[Int, Option[Int]]]())
-		val NUM_HALF_HRS_IN_DAY = 48;
-		val NUM_HALF_HRS_IN_WEEK = 7 * 48
+	def dump() = {
+		(0).until(7).map { i =>
+			(i * 48).until((i + 1) * 48).map { j =>
+				if (hours.contains(j)) '1'
+				else '0'
+			}.mkString
+		}
+	}
+
+	def intervalsByDay() = {
+		val intervals = Array.fill(7)(MutableList[Tuple2[Int, Option[Int]]]())
 		var start = 0
 		while (hours.contains(start) && start < NUM_HALF_HRS_IN_WEEK) {
 			start += 1
@@ -61,38 +72,46 @@ case class Restaurant(val id: Int, val name: String, val hours: BitSet, val time
 		// put all intervals in intervals list
 		if (start == NUM_HALF_HRS_IN_WEEK) {
 			(0).until(7).foreach { i =>
-				intervalsByDay(i) += ((i * NUM_HALF_HRS_IN_DAY, None))
+				intervals(i) += ((i * NUM_HALF_HRS_IN_DAY, None))
 			}
 		}
-		else {
+		else if (hours.nonEmpty) {
 			var end = 0
+			while (!hours.contains(start)) start += 1
+			// start is start index of interval
 			while (start < NUM_HALF_HRS_IN_WEEK) {
-				while (!hours.contains(start)) start += 1
-				// start is start index of interval
 				end = start
 				while (hours.contains(end)) end += 1
 				// end is the index of the first half hour not in the interval
 				val numHalfHrs = NUM_HALF_HRS_IN_DAY
 				/* if the interval is contained in a single day or it ends before six
 					on the next day */
-				val (startDay, endDay) = (end / numHalfHrs, start / numHalfHrs)
+				val (startDay, endDay) = (start / numHalfHrs, end / numHalfHrs)
 				if (endDay == startDay ||
 					(endDay - startDay == 1 && end % numHalfHrs < 6 * 2)) {
-					intervalsByDay(startDay) +=
-						((start, Some((end) % NUM_HALF_HRS_IN_WEEK)))
+					intervals(startDay % 7) +=
+						((start, Some(end % NUM_HALF_HRS_IN_WEEK)))
+					println("%d %d".format(start, end))
 					start = end
 				}
 				else {
 					val nextDayStart = (start / numHalfHrs + 1) * numHalfHrs
-					intervalsByDay(startDay) += ((start, None))
+					intervals(startDay % 7) += ((start, None))
+					println("%d %d".format(start, nextDayStart))
 					start = nextDayStart
 				}
+				while (!hours.contains(start) && start < NUM_HALF_HRS_IN_WEEK) {
+					start += 1
+				}
+				// start is start index of next interval or NUM_HALF_HRS_IN_WEEK
 			}
 		}
-		intervalsByDay
+		intervals
 	}
 
 	private def halfHrIndexToDate(i: Int) = {
+		cal.clear()
+		cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
 		cal.set(Calendar.MINUTE, i * 30)
 		cal.getTime()
 	}
