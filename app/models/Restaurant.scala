@@ -2,28 +2,55 @@ package models
 
 import anorm._
 import anorm.SqlParser._
-import java.lang.Long.parseLong
 import play.api.db._
 import play.api.Play.current
+
 import java.util.{TimeZone, Date, Calendar}
-import java.text.SimpleDateFormat
+import java.text.{DateFormat, SimpleDateFormat}
+
 import scala.collection.BitSet
 import scala.collection.mutable.MutableList
 
-object WeekDay extends Enumeration {
-	type WeekDay = Value
-	val Sun, Mon, Tue, Wed, Thu, Fri, Sat = Value
-}
-
-import WeekDay._
-
-case class Restaurant(val id: Int, val name: String, val hours: BitSet) {
-	def prettyHours(userTZ: TimeZone) = {
-		
+case class Restaurant(val id: Int, val name: String, val hours: BitSet, val timeZone: TimeZone) {
+	private val cal = Calendar.getInstance(timeZone)
+	def prettyHoursByDay() = {
+		val dayFormatter = new SimpleDateFormat("EEEE")
+		dayFormatter.setTimeZone(timeZone)
+		val timeFormatter = DateFormat.getTimeInstance()
+		timeFormatter.setTimeZone(timeZone)
+		hoursByDay().zipWithIndex.map { case (day, i) =>
+			day match {
+				case List() =>
+					cal.set(Calendar.DAY_OF_WEEK, i)
+					"%s: Closed".format(dayFormatter.format(cal.getTime()))
+				case intervals @ List((start, end), _*) =>
+					"%s: %s".format(dayFormatter.format(start),
+						intervals.map {
+							case (start, None) =>
+								cal.setTime(start)
+								if (cal.get(Calendar.HOUR_OF_DAY) == 0) "24 hours"
+								else {
+									"%s&ndash;No closing".format(timeFormatter.format(start))
+								}
+							case (start, end) =>
+								"%s&ndash;%s".format(timeFormatter.format(start),
+									timeFormatter.format(end))
+						}.mkString(" and ")
+					)
+			}
+		}
 	}
 
-	def intervalsByDay() = {
-		val intervals = MutableList[Tuple2[Int, Int]]()
+	def hoursByDay() = {
+		intervalsByDay().map { intervals =>
+			intervals.view.map { case (start, end) =>
+				(halfHrIndexToDate(start), end.map(halfHrIndexToDate(_)))
+			}.toList
+		}
+	}
+
+	private def intervalsByDay() = {
+		val intervalsByDay = Array.fill(7)(MutableList[Tuple2[Int, Option[Int]]]())
 		val NUM_HALF_HRS_IN_DAY = 48;
 		val NUM_HALF_HRS_IN_WEEK = 7 * 48
 		var start = 0
@@ -33,9 +60,8 @@ case class Restaurant(val id: Int, val name: String, val hours: BitSet) {
 		
 		// put all intervals in intervals list
 		if (start == NUM_HALF_HRS_IN_WEEK) {
-			val numHalfHrs = NUM_HALF_HRS_IN_DAY
 			(0).until(7).foreach { i =>
-				intervals += ((i * numHalfHrs, (i + 1) * numHalfHrs - 1))
+				intervalsByDay(i) += ((i * NUM_HALF_HRS_IN_DAY, None))
 			}
 		}
 		else {
@@ -45,25 +71,30 @@ case class Restaurant(val id: Int, val name: String, val hours: BitSet) {
 				// start is start index of interval
 				end = start
 				while (hours.contains(end)) end += 1
-				// end is index of first half hour not in interval
+				// end is the index of the first half hour not in the interval
 				val numHalfHrs = NUM_HALF_HRS_IN_DAY
-				/* if the interval is contained in a single day or end is before six
+				/* if the interval is contained in a single day or it ends before six
 					on the next day */
-				if (end / numHalfHrs == start / numHalfHrs ||
-					end % numHalfHrs < 6 * 2) {
-					intervals += ((start, (end - 1) % NUM_HALF_HRS_IN_WEEK))
+				val (startDay, endDay) = (end / numHalfHrs, start / numHalfHrs)
+				if (endDay == startDay ||
+					(endDay - startDay == 1 && end % numHalfHrs < 6 * 2)) {
+					intervalsByDay(startDay) +=
+						((start, Some((end) % NUM_HALF_HRS_IN_WEEK)))
 					start = end
 				}
 				else {
 					val nextDayStart = (start / numHalfHrs + 1) * numHalfHrs
-					intervals += ((start, (nextDayStart - 1) % NUM_HALF_HRS_IN_WEEK))
+					intervalsByDay(startDay) += ((start, None))
 					start = nextDayStart
 				}
 			}
 		}
+		intervalsByDay
+	}
 
-		// group intervals by start day
-		intervals.groupBy { case (i, _) => i / NUM_HALF_HRS_IN_DAY }
+	private def halfHrIndexToDate(i: Int) = {
+		cal.set(Calendar.MINUTE, i * 30)
+		cal.getTime()
 	}
 }
 
@@ -82,7 +113,7 @@ object Restaurant {
 								}.map { case (_, j) => i * 48 + j }
 						}.flatten: _*
 					)
-					Restaurant(id, name, weekBitSet)
+					Restaurant(id, name, weekBitSet, TimeZone.getTimeZone("EST"))
 				}
 			}
 	}
