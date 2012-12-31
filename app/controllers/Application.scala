@@ -26,6 +26,7 @@ object Application extends Controller {
 		Ok("Hello, world!")
 	}
 
+/*
 	def listRestaurants(fmt: String) = Action {
 		fmt match {
 			case "json" => {
@@ -42,10 +43,10 @@ object Application extends Controller {
 			}
 		}
 	}
+*/
 
 	def restaurants() = Action {
-		val est = TimeZone.getTimeZone("EST")
-		Ok(views.html.restaurants(Restaurant.open(est), Restaurant.closed(est)))
+		Ok(views.html.restaurants(Restaurant.open, Restaurant.closed))
 	}
 
 	def restaurant(id: Int) = Action {
