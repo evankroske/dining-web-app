@@ -81,7 +81,7 @@ case class Restaurant(val id: Int, val name: String, val hours: BitSet, val time
 			// start is start index of interval
 			while (start < NUM_HALF_HRS_IN_WEEK) {
 				end = start
-				while (hours.contains(end)) end += 1
+				while (hours.contains(end % NUM_HALF_HRS_IN_WEEK)) end += 1
 				// end is the index of the first half hour not in the interval
 				val numHalfHrs = NUM_HALF_HRS_IN_DAY
 				/* if the interval is contained in a single day or it ends before six
