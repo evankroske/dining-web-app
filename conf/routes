@@ -7,6 +7,8 @@ GET	/	controllers.Application.index
 GET	/usf	controllers.Application.index
 GET	/usf/restaurants	controllers.Application.restaurants
 GET	/usf/restaurant/:id	controllers.Application.restaurant(id: Int)
+GET	/api/usf/restaurants	controllers.Api.restaurants
+GET	/api/usf/restaurants/:id	controllers.Api.restaurant(id: Int)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

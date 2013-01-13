@@ -26,32 +26,16 @@ object Application extends Controller {
 		Redirect(routes.Application.restaurants)
 	}
 
-/*
-	def listRestaurants(fmt: String) = Action {
-		fmt match {
-			case "json" => {
-				Ok(
-					Json.toJson(
-						Restaurant.all().map { r =>
-							Json.toJson(Map(
-								"name" -> Json.toJson(r.name),
-								"hours" -> Json.toJson(r.hours.values.toSeq)
-							))
-						}
-					)
-				)
-			}
-		}
+	def listRestaurants() = Action {
+		Ok(Json.toJson(Restaurant.all))
 	}
-*/
 
 	def restaurants() = Action {
 		Ok(views.html.restaurants(Restaurant.open, Restaurant.closed))
 	}
 
 	def restaurant(id: Int) = Action {
-		val est = TimeZone.getTimeZone("EST")
-		Restaurant.details(id, est) match {
+		Restaurant.details(id) match {
 			case Some(r) => 
 				Ok(views.html.restaurant(r))
 			case None =>

@@ -180,7 +180,7 @@ object Restaurant {
 		q.as(restaurant *)
 	}
 
-	def details(id: Int, userTZ: TimeZone) = DB.withConnection { implicit c =>
+	def details(id: Int) = DB.withConnection { implicit c =>
 		SQL("""select id, name, sunday_hours::char(48), monday_hours::char(48), tuesday_hours::char(48), wednesday_hours::char(48), thursday_hours::char(48), friday_hours::char(48), saturday_hours::char(48)
 		from usf_restaurants where id = {id}""").on("id" -> id).
 			as(ResultSetParser.singleOpt(restaurant))
