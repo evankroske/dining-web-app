@@ -29,13 +29,4 @@ object Application extends Controller {
 	def restaurants = Action {
 		Ok(views.html.restaurants())
 	}
-
-	def restaurant(id: Int) = Action {
-		Restaurant.details(id) match {
-			case Some(r) => 
-				Ok(views.html.restaurant(r))
-			case None =>
-				BadRequest("Too bad")
-		}
-	}
 }

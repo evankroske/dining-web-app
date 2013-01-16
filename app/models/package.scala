@@ -13,8 +13,7 @@ package object models {
 			BitSet(((r \ "hours").as[List[Long]] zipWithIndex) flatMap {
 				case (l, i) =>
 					(BitSet fromArray Array(l)) map (j => j + i * 48)
-			}: _*),
-			TimeZone.getTimeZone("EST"))
+			}: _*))
 
 		def writes(r: Restaurant): JsValue = JsObject(List(
 			"id" -> JsNumber(r.id),

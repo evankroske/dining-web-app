@@ -14,13 +14,4 @@ object Api extends Controller {
 	def restaurants = Action {
 		Ok(Json.toJson(Restaurant.all))
 	}
-
-	def restaurant(id: Int) = Action {
-		Restaurant.details(id) match {
-			case Some(r) => 
-				Ok(Json.toJson(r))
-			case None =>
-				BadRequest("Too bad")
-		}
-	}
 }
