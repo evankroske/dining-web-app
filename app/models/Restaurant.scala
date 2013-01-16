@@ -140,7 +140,7 @@ object Restaurant {
 			tuesday_hours::char(48), wednesday_hours::char(48),
 			thursday_hours::char(48), friday_hours::char(48),
 			saturday_hours::char(48)
-			from usf_restaurants
+			from restaurants
 			order by name""").as(restaurant *)
 	}
 
