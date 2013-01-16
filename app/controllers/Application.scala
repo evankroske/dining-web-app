@@ -26,12 +26,8 @@ object Application extends Controller {
 		Redirect(routes.Application.restaurants)
 	}
 
-	def listRestaurants() = Action {
-		Ok(Json.toJson(Restaurant.all))
-	}
-
-	def restaurants() = Action {
-		Ok(views.html.restaurants(Restaurant.open, Restaurant.closed))
+	def restaurants = Action {
+		Ok(views.html.restaurants())
 	}
 
 	def restaurant(id: Int) = Action {
