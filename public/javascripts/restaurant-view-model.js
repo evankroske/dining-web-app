@@ -13,14 +13,9 @@ function RestaurantsViewModel() {
 
 	Sammy(function() {
 		this.get("#!restaurants", function() {
-			var mapping = {
-				create: function(options) {
-					return new RestaurantViewModel(options.data);
-				}
-			};
 			self.chosenRestaurant(null);
 			$.getJSON("/api/usf/restaurants", null, function(data) {
-				self.restaurants(ko.mapping(
+				self.restaurants.unshift.apply(self.restaurants, data);
 			});
 		});
 		this.get("", function() { this.app.runRoute("get", "#!restaurants"); });

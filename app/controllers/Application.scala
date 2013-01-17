@@ -26,7 +26,5 @@ object Application extends Controller {
 		Redirect(routes.Application.restaurants)
 	}
 
-	def restaurants = Action {
-		Ok(views.html.restaurants())
-	}
+	def restaurants = Assets.at("/public", "pages/restaurants.html")
 }
