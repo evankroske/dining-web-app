@@ -1,8 +1,8 @@
 function ObservableBitSet(data) {
 	var self = this;
 	self.contains = function(i) {
-		return (i < data.length * 48 &&
-			(data[Math.floor(i / 48)] & (1 << (i % 48))));
+		return (i < data.length * 32 &&
+			(data[Math.floor(i / 32)]() & (1 << (i % 32))));
 	}
 }
 
@@ -11,7 +11,7 @@ function RestaurantViewModel(data) {
 	self.id = data.id;
 	self.name = ko.observable(data.name);
 	self.hours = data.hours.map(function (e) {
-		ko.observable(e);
+		return ko.observable(e);
 	});
 	self.hoursBitSet = new ObservableBitSet(self.hours);
 	self.open = ko.computed(function() {
