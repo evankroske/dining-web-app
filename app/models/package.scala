@@ -13,13 +13,10 @@ package object models {
 			val numInts = (ceil((b max) / 32.0)).toInt
 			(0 until numInts) map { i =>
 				JsNumber(parseInt(
-					(
-						(if (b contains (i * 32 + 31)) '-' else '0') +:
-						((30 to 0 by -1) map { j =>
+						(30 to 0 by -1) map { j =>
 							if (b contains (i * 32 + j)) '1'
 							else '0'
-						})
-					) mkString, 2))
+						} mkString, 2) | (if (b contains (i * 32 + 31)) 1 << 31 else 0))
 			}
 		}
 
