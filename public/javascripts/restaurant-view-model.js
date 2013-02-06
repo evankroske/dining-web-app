@@ -1,5 +1,5 @@
 var HALF_HRS_PER_DAY = 48;
-var HALF_HRS_PER_WEEK = 7 * halfHrsPerDay;
+var HALF_HRS_PER_WEEK = 7 * HALF_HRS_PER_DAY;
 var LATEST_CLOSE_HALF_HR_INDEX = 4 * 2 + 1;
 
 function ObservableBitSet(hours) {
@@ -23,24 +23,24 @@ function halfHrIndexToUtc(halfHrIndex, timeZoneOffset) {
 
 function makeComputedHours(dayIndex, hours, timeZoneOffset) {
 	return ko.computed(function () {
-		var intervalsForDay = (function () {
+		var intervals = (function () {
 			var start = 0;
 			while (hours.contains(
-					halfHrIndexToUtc(start + dayIndex * halfHrsPerDay)) &&
+					halfHrIndexToUtc(start + dayIndex * HALF_HRS_PER_DAY)) &&
 				start <= LATEST_CLOSE_HALF_HR_INDEX) {
 				++start;
 			}
 			start = start <= LATEST_CLOSE_HALF_HR_INDEX ? start : 0;
 			var intervals = [];
 			while (true) {
-				while (!self.hoursBitSet.contains(
+				while (!hours.contains(
 						halfHrIndexToUtc(start + dayIndex * HALF_HRS_PER_DAY)) &&
 					start < HALF_HRS_PER_DAY) {
 					++start;
 				}
 				if (start >= HALF_HRS_PER_DAY) break;
 				var end = start;
-				while (self.hoursBitSet.contains(
+				while (hours.contains(
 						halfHrIndexToUtc(end + dayIndex * HALF_HRS_PER_DAY)) &&
 					end <= HALF_HRS_PER_DAY + LATEST_CLOSE_HALF_HR_INDEX) {
 					++end;
@@ -56,60 +56,32 @@ function makeComputedHours(dayIndex, hours, timeZoneOffset) {
 			return intervals;
 		})();
 
-		var intervalsByDay = (function (intervals) {
-			var intervalsByDay = [];
-			for (var i = 0; i < 7; ++i) intervalsByDay.push([]);
-			for (var i = 0; i < intervals.length; ++i) {
-				var interval = intervals[i];
-				var start = interval[0], end = interval[1];
-				while (start < end) {
-					var startDay = Math.floor(start / halfHrsPerDay),
-						endDay = Math.floor(end / halfHrsPerDay);
-					if (startDay === endDay ||
-						(endDay - startDay === 1 &&
-							end % halfHrsPerDay <= 2 * 6)) {
-						intervalsByDay[startDay].push([start, [end]]);
-						break;
-					}
-					else
-					{
-						intervalsByDay[startDay].push(start, []);
-						start = (startDay + 1) * halfHrsPerDay;
-					}
-				}
-			}
-			return intervalsByDay;
-		})(intervalsInThisTimeZone);
-
-		var timeIntervalsByDay = intervalsByDay.map(function (intervals) {
-			return intervals.map(function (interval) {
-				return [halfHrIndexToTime(interval[0]),
-					interval[1].map(function(end) {
-						return halfHrIndexToTime(end);
-					})
-				];
-			});
+		var timeIntervals = intervals.map(function (interval) {
+			return [halfHrIndexToTime(interval[0]),
+				interval[1].map(function(end) {
+					return halfHrIndexToTime(end);
+				})
+			];
 		});
 
-		var stringIntervalsByDay =
-			timeIntervalsByDay.map(function(intervals) {
-			return intervals.map(function (interval) {
-				var startTime = interval[0], endTimeOpt = interval[1];
-				var timeFormat = "h:mm a";
-				if (endTimeOpt.length === 0) {
-					if (startTime.hours() === 0 && startTime.minutes() === 0) {
-						return "24 hours";
-					}
-					else {
-						return startTime.format(timeFormat) + " – No close";
-					}
+		var stringIntervals = timeIntervals.map(function(interval) {
+			var startTime = interval[0], endTimeOpt = interval[1];
+			var timeFormat = "h:mm a";
+			if (endTimeOpt.length === 0) {
+				if (startTime.hours() === 0 && startTime.minutes() === 0) {
+					return "24 hours";
 				}
 				else {
-					return startTime.format(timeFormat) + " – " +
-						endTimeOpt[0].format(timeFormat);
+					return startTime.format(timeFormat) + " – No close";
 				}
-			});
+			}
+			else {
+				return startTime.format(timeFormat) + " – " +
+					endTimeOpt[0].format(timeFormat);
+			}
 		});
+
+		return stringIntervals.join(" and ");
 	});
 }
 
@@ -128,14 +100,13 @@ function RestaurantViewModel(data) {
 		return self.hoursBitSet.contains(halfHrIndex);
 	});
 	self.prettyHours = (function () {
-		return (function () {
-			var hoursByDay = [];
-			for (var i = 0; i < 7; ++i) {
-				hoursByDay.push(makeComputedHours(i));
-			}
-			return hoursByDay;
+		var hoursByDay = [];
+		for (var i = 0; i < 7; ++i) {
+			// Assume eastern time zone
+			var timeZoneOffset = -5;
+			hoursByDay.push(makeComputedHours(i, self.hoursBitSet, timeZoneOffset));
 		}
-
+		return hoursByDay;
 	})();
 }
 
