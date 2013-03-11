@@ -6,19 +6,30 @@
 	<title>Restaurants at the University of South Florida</title>
 	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
 	<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
-	<script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
+	<script>
+		$(document).bind("mobileinit", function () {
+			$.extend($.mobile, {
+				"linkBindingEnabled": false,
+				"hashListeningEnabled": false
+			});
+		});
+	</script>
+	<script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.js"></script>
 	<script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-2.2.0.js"></script>
-	<script src="/assets/javascripts/sammy-0.7.2.min.js"></script>
+	<script src="/assets/javascripts/path.min.js"></script>
 	<script src="/assets/javascripts/moment.min.js"></script>
 	<script src="/assets/javascripts/restaurant-view-model.js"></script>
+	<script src="/assets/javascripts/routes.js"></script>
 	<script>
+		startRouter();
 		$(document).ready(function () {
-			ko.applyBindings(new RestaurantsViewModel());
+			ko.applyBindings(viewModel);
+			Path.listen();
 		});
 	</script>
 </head>
 <body>
-<div data-role="page">
+<div data-role="page" id="restaurants">
 	<div data-role="header">
 		<h1>USF Restaurants</h1>
 	</div>
@@ -32,6 +43,16 @@
 			<!-- ko foreach: closed -->
 				<li data-bind="text: $data.name"></li>
 			<!-- /ko -->
+		</ul>
+	</div>
+</div>
+<div data-role="page" id="details" data-bind="with: chosenRestaurant">
+	<div data-role="header">
+		<h1 data-bind="text: name"></h1>
+	</div>
+	<div data-role="content">
+		<ul data-bind="foreach: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']">
+			<li data-bind="text: $data + ': ' + prettyHours[$index]"></li>
 		</ul>
 	</div>
 </div>

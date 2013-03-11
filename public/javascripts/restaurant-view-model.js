@@ -125,15 +125,4 @@ function RestaurantsViewModel() {
 			return !r.open();
 		});
 	});
-
-	Sammy(function() {
-		this.get("#!restaurants", function() {
-			self.chosenRestaurant(null);
-			$.getJSON("/api/usf/restaurants", null, function(data) {
-				self.restaurants.unshift.apply(self.restaurants,
-					data.map(function(r) { return new RestaurantViewModel(r); }));
-			});
-		});
-		this.get("", function() { this.app.runRoute("get", "#!restaurants"); });
-	}).run();
 }

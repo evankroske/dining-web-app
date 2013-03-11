@@ -1,4 +1,6 @@
 import play.api.libs.json._
+import play.api.libs.functional.syntax._
+
 
 import java.lang.Integer.parseInt
 import java.util.TimeZone
@@ -8,17 +10,20 @@ import scala.collection.immutable.BitSet.{fromArray => bitSetFromArray}
 import scala.math._
 
 package object models {
-	implicit object RestaurantFormat extends Format[Restaurant] {
-		implicit def bitSet2JsNumberSeq(b: BitSet): Seq[JsNumber] = {
-			val numInts = (ceil((b max) / 32.0)).toInt
-			(0 until numInts) map { i =>
-				JsNumber(parseInt(
-						(30 to 0 by -1) map { j =>
-							if (b contains (i * 32 + j)) '1'
-							else '0'
-						} mkString, 2) | (if (b contains (i * 32 + 31)) 1 << 31 else 0))
-			}
+	implicit def bitSet2JsNumberSeq(b: BitSet): Seq[JsNumber] = {
+		val numInts = (ceil((b max) / 32.0)).toInt
+		(0 until numInts) map { i =>
+			JsNumber(parseInt(
+					(30 to 0 by -1) map { j =>
+						if (b contains (i * 32 + j)) '1'
+						else '0'
+					} mkString, 2) | (if (b contains (i * 32 + 31)) 1 << 31 else 0))
 		}
+	}
+
+	implicit val restaurantFormat: Format[Restaurant] = (
+		
+	)(Restaurant.apply, unlift(Restaurant.unapply))
 
 		def reads(r: JsValue): Restaurant = Restaurant(
 			(r \ "id").as[Int],
