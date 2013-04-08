@@ -12,21 +12,20 @@ import scala.collection.immutable.BitSet
 case class Restaurant(val id: Int, val name: String, val hours: BitSet)
 
 object Restaurant {
-	val bitSetReads: Reads[BitSet] =
-		__.read[Seq[Int]].map[Array[Long]] { l =>
-			l.grouped(2).map {
-				case List(lsb, msb) => msb.toLong << 32 | lsb.toLong & 0xffffffffL
-				case List(msb) => msb.toLong << 32
-			}.toArray
-		}.map(BitSet.fromBitMask _)
+	val bitSetReads: Reads[BitSet] = __.read[Seq[Int]].map[Array[Long]] { l =>
+		l.grouped(2).map {
+			case List(lsb, msb) => msb.toLong << 32 | lsb.toLong & 0xffffffffL
+			case List(lsb) => lsb.toLong
+		}.toArray
+	}.map(BitSet.fromBitMask _)
 	
-	val bitSetWrites: Writes[BitSet] = new Writes[BitSet] {
+	implicit object BitSetWrites extends Writes[BitSet] {
 		def writes(b: BitSet): JsValue = Json.toJson(b.toBitMask.flatMap { mask =>
 			List(mask.toInt, mask >> 32 toInt)
 		})
 	}
 
-	implicit val bitSetFormat = Format(bitSetReads, bitSetWrites)
+	implicit val bitSetFormat = Format(bitSetReads, BitSetWrites)
 
 	implicit val restaurantFormat: Format[Restaurant] = (
 		(__ \ "id").format[Int] ~
