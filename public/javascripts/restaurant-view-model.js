@@ -26,7 +26,7 @@ function makeComputedHours(dayIndex, hours, timeZoneOffset) {
 		var intervals = (function () {
 			var start = 0;
 			while (hours.contains(
-					halfHrIndexToUtc(start + dayIndex * HALF_HRS_PER_DAY)) &&
+					halfHrIndexToUtc(start + dayIndex * HALF_HRS_PER_DAY, timeZoneOffset)) &&
 				start <= LATEST_CLOSE_HALF_HR_INDEX) {
 				++start;
 			}
@@ -34,14 +34,16 @@ function makeComputedHours(dayIndex, hours, timeZoneOffset) {
 			var intervals = [];
 			while (true) {
 				while (!hours.contains(
-						halfHrIndexToUtc(start + dayIndex * HALF_HRS_PER_DAY)) &&
+						halfHrIndexToUtc(start + dayIndex * HALF_HRS_PER_DAY,
+							timeZoneOffset)) &&
 					start < HALF_HRS_PER_DAY) {
 					++start;
 				}
 				if (start >= HALF_HRS_PER_DAY) break;
 				var end = start;
 				while (hours.contains(
-						halfHrIndexToUtc(end + dayIndex * HALF_HRS_PER_DAY)) &&
+						halfHrIndexToUtc(end + dayIndex * HALF_HRS_PER_DAY,
+							timeZoneOffset)) &&
 					end <= HALF_HRS_PER_DAY + LATEST_CLOSE_HALF_HR_INDEX) {
 					++end;
 				}

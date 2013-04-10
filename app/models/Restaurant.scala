@@ -19,7 +19,7 @@ object Restaurant {
 		}.toArray
 	}.map(BitSet.fromBitMask _)
 	
-	implicit object BitSetWrites extends Writes[BitSet] {
+	object BitSetWrites extends Writes[BitSet] {
 		def writes(b: BitSet): JsValue = Json.toJson(b.toBitMask.flatMap { mask =>
 			List(mask.toInt, mask >> 32 toInt)
 		})
