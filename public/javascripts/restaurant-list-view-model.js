@@ -1,5 +1,5 @@
 define(["knockout", "restaurant-view-model", "jquery"], function (ko, RestaurantViewModel, $) {
-	function RestaurantListViewModel() {
+	function RestaurantListViewModel(restaurantsModel) {
 		var self = this;
 		var that = self;
 
@@ -16,15 +16,12 @@ define(["knockout", "restaurant-view-model", "jquery"], function (ko, Restaurant
 			});
 		});
 
-		$.getJSON("/api/usf/restaurants").then(function (restaurantsJson) {
-			return restaurantsJson.map(
-				function (data) { return new RestaurantViewModel(data); });
-		}).done(function (restaurants) {
-			self.loaded(true);
+		restaurantsModel.restaurants().done(function (restaurants) {
 			self.restaurants.unshift.apply(self.restaurants, restaurants);
+			self.loaded(true);
 		}).fail(function () {
 			console.log(arguments);
-		});;
+		});
 	}
 /*
 		restaurantsCache.all().done(function (restaurants) {

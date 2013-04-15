@@ -1,20 +1,19 @@
-define(["jquery", "knockout", "restaurant-list-view-model", "path", "jquerymobile", "domReady!"], function ($, ko, RestaurantListViewModel) {
+define(["jquery", "knockout", "restaurant-list-view-model", "restaurants-model", "path", "jquerymobile", "domReady!"],
+function ($, ko, RestaurantListViewModel, RestaurantsModel) {
 	var restaurantListViewModel;
 	var restaurantDetailsViewModel;
+	var restaurantsModel = new RestaurantsModel();
 	function startRouter() {
-	/*
-		$.getJSON("/api/usf/restaurants", null, function(data) {
-			viewModel.restaurants.unshift.apply(viewModel.restaurants,
-				data.map(function(r) { return new RestaurantViewModel(r); }));
-		});
-	*/
 		Path.map("#!restaurants").to(function() {
-			restaurantListViewModel = restaurantListViewModel ||
-				new RestaurantListViewModel();
-			ko.applyBindings(restaurantListViewModel, $("#restaurants")[0]);
+			console.log("#!restaurants");
+			if (!restaurantListViewModel) {
+				restaurantListViewModel = new RestaurantListViewModel(restaurantsModel);
+				ko.applyBindings(restaurantListViewModel, $("#restaurants")[0]);
+			}
 			$.mobile.changePage($("#restaurants"), {"changeHash": false});
 		});
 		Path.map("#!restaurants/:id").to(function () {
+			console.log("#!restaurants/:id");
 			/*
 			ko.applyBindings(null, $("#details")[0]);
 			*/
