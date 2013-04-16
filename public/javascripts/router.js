@@ -1,5 +1,6 @@
-define(["jquery", "knockout", "restaurant-list-view-model", "restaurants-model", "path", "jquerymobile", "domReady!"],
-function ($, ko, RestaurantListViewModel, RestaurantsModel) {
+define(["jquery", "knockout", "restaurant-list-view-model", "restaurants-model", "restaurant-details-view-model", "path", "jquerymobile", "domReady!"],
+function ($, ko, RestaurantListViewModel, RestaurantsModel,
+		RestaurantDetailsViewModel) {
 	var restaurantListViewModel;
 	var restaurantDetailsViewModel;
 	var restaurantsModel = new RestaurantsModel();
@@ -14,9 +15,16 @@ function ($, ko, RestaurantListViewModel, RestaurantsModel) {
 		});
 		Path.map("#!restaurants/:id").to(function () {
 			console.log("#!restaurants/:id");
-			/*
-			ko.applyBindings(null, $("#details")[0]);
-			*/
+			if (!restaurantDetailsViewModel) {
+				restaurantDetailsViewModel =
+					new RestaurantDetailsViewModel(restaurantsModel);
+				// Probably should make sure parameter is integer
+				restaurantDetailsViewModel.restaurantId(this.params["id"]);
+				ko.applyBindings(restaurantDetailsViewModel, $("#details")[0]);
+			}
+			else {
+				restaurantDetailsViewModel.restaurantId(this.params["id"]);
+			}
 			$.mobile.changePage("#details", {"changeHash": false});
 		});
 		Path.root("#!restaurants");

@@ -1,4 +1,4 @@
-define(["knockout", "restaurant-view-model", "jquery"], function (ko, RestaurantViewModel, $) {
+define(["knockout", "restaurant-view-model"], function (ko, RestaurantViewModel) {
 	function RestaurantListViewModel(restaurantsModel) {
 		var self = this;
 		var that = self;
