@@ -50,9 +50,9 @@ object Restaurant {
 			order by name""").as(restaurant *)
 	}
 
-	def details(id: Int) = DB.withConnection { implicit c =>
+	def byId(id: Int): Option[Restaurant] = DB.withConnection { implicit c =>
 		SQL("""select id, name, hours::char(336)
-		from usf_restaurants where id = {id}""").on("id" -> id).
+		from restaurants where id = {id}""").on("id" -> id).
 			as(ResultSetParser.singleOpt(restaurant))
 	}
 }
