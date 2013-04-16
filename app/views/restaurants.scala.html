@@ -25,6 +25,9 @@
 			<!-- /ko -->
 		</ul>
 	</div>
+	<div data-role="footer" class="ui-bar">
+		<a href="#!signin" data-role="button" data-icon="gear">Admin sign in</a>
+	</div>
 </div>
 
 <div data-role="page" id="details">
@@ -36,6 +39,27 @@
 		<ul data-bind="foreach: loaded() ? restaurant.prettyHours : []">
 			<li data-bind="text: $data"></li>
 		</ul>
+	</div>
+</div>
+
+<div data-role="dialog" id="signin">
+	<div data-role="header">
+		<h1>Sign in</h1>
+	</div>
+	<div data-role="content">
+		<label for="email" class="ui-hidden-accessible">Email:</label>
+		<input type="email" name="email" id="email" placeholder="Email" value="" />
+		<label for="password" class="ui-hidden-accessible">Password:</label>
+		<input type="password" name="password" id="password" placeholder="Password" value="" />
+		<div class="ui-grid-a">
+		<div class="ui-block-a">
+			<a href="#!restaurants" data-role="button" data-rel="back">Cancel</a>
+		</div>
+		<div class="ui-block-b">
+			<button type="submit" name="submit">Sign in</a>
+		</div>
+		</div>
+		</div>
 	</div>
 </div>
 </body>

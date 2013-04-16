@@ -11,7 +11,7 @@ function ($, ko, RestaurantListViewModel, RestaurantsModel,
 				restaurantListViewModel = new RestaurantListViewModel(restaurantsModel);
 				ko.applyBindings(restaurantListViewModel, $("#restaurants")[0]);
 			}
-			$.mobile.changePage($("#restaurants"), {"changeHash": false});
+			$.mobile.changePage($("#restaurants"));
 		});
 		Path.map("#!restaurants/:id").to(function () {
 			console.log("#!restaurants/:id");
@@ -25,9 +25,16 @@ function ($, ko, RestaurantListViewModel, RestaurantsModel,
 			else {
 				restaurantDetailsViewModel.restaurantId(this.params["id"]);
 			}
-			$.mobile.changePage("#details", {"changeHash": false});
+			$.mobile.changePage("#details");
 		});
+
+		Path.map("#!signin").to(function () {
+			console.log("#!signin");
+			$.mobile.changePage("#signin");
+		});
+
 		Path.root("#!restaurants");
+
 		Path.listen();
 	}
 	return {start: startRouter};
