@@ -29,10 +29,10 @@
 
 <div data-role="page" id="details">
 	<div data-role="header">
-		<h1 data-bind="text: loaded ? restaurant.name : 'Loading...'"></h1>
+		<h1 data-bind="text: loaded() ? restaurant.name() : 'Loading...'"></h1>
 	</div>
 	<div data-role="content">
-		<ul data-bind="visible: loaded, foreach: restaurant.prettyHours">
+		<ul data-bind="foreach: loaded() ? restaurant.prettyHours : []">
 			<li data-bind="text: $data"></li>
 		</ul>
 	</div>
