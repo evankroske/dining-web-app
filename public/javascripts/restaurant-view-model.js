@@ -61,6 +61,10 @@ define(["knockout", "moment"], function(ko, moment) {
 					return intervals;
 				})();
 
+				if (intervals.length === 0) {
+					return "Closed";
+				}
+
 				var timeIntervals = intervals.map(function (interval) {
 					return [halfHrIndexToTime(interval[0]),
 						interval[1].map(function(end) {
