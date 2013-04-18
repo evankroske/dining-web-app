@@ -23,13 +23,6 @@ define(["knockout", "restaurant-view-model"], function (ko, RestaurantViewModel)
 			console.log(arguments);
 		});
 	}
-/*
-		restaurantsCache.all().done(function (restaurants) {
-			self.loaded(true);
-			self.restaurants.unshift.apply(self.restaurants, restaurants);
-		}).fail(function () {
-			console.log("Failed to load restaurant list");
-		});
-	*/
+
 	return RestaurantListViewModel;
 });

@@ -42,21 +42,21 @@
 	</div>
 </div>
 
-<div data-role="dialog" id="signin">
+<div data-role="dialog" id="signin" data-close-btn="none">
 	<div data-role="header">
 		<h1>Sign in</h1>
 	</div>
 	<div data-role="content">
 		<label for="email" class="ui-hidden-accessible">Email:</label>
-		<input type="email" name="email" id="email" placeholder="Email" value="" />
+		<input type="email" name="email" id="email" placeholder="Email" value="" data-bind="value: email" />
 		<label for="password" class="ui-hidden-accessible">Password:</label>
-		<input type="password" name="password" id="password" placeholder="Password" value="" />
+		<input type="password" name="password" id="password" placeholder="Password" value="" data-bind="value: password" />
 		<div class="ui-grid-a">
 		<div class="ui-block-a">
 			<a href="#!restaurants" data-role="button" data-rel="back">Cancel</a>
 		</div>
 		<div class="ui-block-b">
-			<button type="submit" name="submit">Sign in</a>
+			<button type="submit" name="submit" data-bind="click: authenticate">Sign in</a>
 		</div>
 		</div>
 		</div>

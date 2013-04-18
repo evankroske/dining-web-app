@@ -1,9 +1,11 @@
-define(["jquery", "knockout", "restaurant-list-view-model", "restaurants-model", "restaurant-details-view-model", "path", "jquerymobile", "domReady!"],
+define(["jquery", "knockout", "restaurant-list-view-model", "restaurants-model", "restaurant-details-view-model", "sign-in-page-view-model", "user-model", "path", "jquerymobile", "domReady!"],
 function ($, ko, RestaurantListViewModel, RestaurantsModel,
-		RestaurantDetailsViewModel) {
+		RestaurantDetailsViewModel, SignInPageViewModel, UserModel) {
 	var restaurantListViewModel;
 	var restaurantDetailsViewModel;
+	var signInPageViewModel;
 	var restaurantsModel = new RestaurantsModel();
+	var userModel = new UserModel();
 	function startRouter() {
 		Path.map("#!restaurants").to(function() {
 			console.log("#!restaurants");
@@ -30,6 +32,10 @@ function ($, ko, RestaurantListViewModel, RestaurantsModel,
 
 		Path.map("#!signin").to(function () {
 			console.log("#!signin");
+			if (!signInPageViewModel) {
+				signInPageViewModel = new SignInPageViewModel(userModel);
+				ko.applyBindings(signInPageViewModel, $("#signin")[0]);
+			}
 			$.mobile.changePage("#signin");
 		});
 
