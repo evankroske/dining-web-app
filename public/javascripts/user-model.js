@@ -5,6 +5,7 @@ function($) {
 
 		self.authenticate = function (email, password) {
 			return $.ajax({
+				type: "post",
 				url: "/api/authenticate",
 				contentType: "application/json",
 				dataType: "json",
