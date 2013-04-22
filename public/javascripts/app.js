@@ -9,7 +9,8 @@ requirejs.config({
 		jquerymobile: "http://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0",
 		path: "path.min",
 		knockout: "http://ajax.aspnetcdn.com/ajax/knockout/knockout-2.2.1",
-		moment: "moment.min"
+		moment: "moment.min",
+		jquerycookie: "jquery.cookie"
 	}
 });
 

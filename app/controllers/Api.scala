@@ -3,9 +3,6 @@ package controllers
 import play.api._
 import play.api.mvc._
 import play.api.libs.json._
-import org.bouncycastle.crypto.PBEParametersGenerator.PKCS5PasswordToUTF8Bytes
-import org.bouncycastle.crypto.generators.PKCS5S2ParametersGenerator
-import org.bouncycastle.crypto.params._
 
 import models._
 
@@ -24,7 +21,8 @@ object Api extends Controller {
 			errors => BadRequest("Fail"),
 			user => {
 				User.authenticate(user) match {
-					case Some(user) => Ok(Json.toJson(user))
+					case Some(user) => Ok(Json.toJson(user)).
+						withSession("email" -> user.email, "admin" -> user.admin.toString)
 					case _ => UnprocessableEntity("Fail")
 				}
 			}
