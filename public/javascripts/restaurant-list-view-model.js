@@ -1,10 +1,18 @@
 define(["knockout", "restaurant-view-model"], function (ko, RestaurantViewModel) {
-	function RestaurantListViewModel(restaurantsModel) {
+	return (function (restaurantsModel, userModel) {
 		var self = this;
 		var that = self;
 
 		self.loaded = ko.observable(false);
 		self.restaurants = ko.observableArray();
+
+		restaurantsModel.restaurants().done(function (restaurants) {
+			self.restaurants.unshift.apply(self.restaurants, restaurants);
+			self.loaded(true);
+		}).fail(function () {
+			console.log(arguments);
+		});
+
 		self.open = ko.computed(function() {
 			return ko.utils.unwrapObservable(self.restaurants).filter(function(r) {
 				return r.open();
@@ -16,13 +24,14 @@ define(["knockout", "restaurant-view-model"], function (ko, RestaurantViewModel)
 			});
 		});
 
-		restaurantsModel.restaurants().done(function (restaurants) {
-			self.restaurants.unshift.apply(self.restaurants, restaurants);
-			self.loaded(true);
-		}).fail(function () {
-			console.log(arguments);
-		});
-	}
+		self.user = userModel.user;
 
-	return RestaurantListViewModel;
+		self.signOut = function () {
+			userModel.signOut();
+		};
+
+		self.deleteRestaurant = function (id) {
+			return;
+		};
+	});
 });

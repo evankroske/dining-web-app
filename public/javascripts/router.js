@@ -10,7 +10,8 @@ function ($, ko, RestaurantListViewModel, RestaurantsModel,
 		Path.map("#!restaurants").to(function() {
 			console.log("#!restaurants");
 			if (!restaurantListViewModel) {
-				restaurantListViewModel = new RestaurantListViewModel(restaurantsModel);
+				restaurantListViewModel =
+					new RestaurantListViewModel(restaurantsModel, userModel);
 				ko.applyBindings(restaurantListViewModel, $("#restaurants")[0]);
 			}
 			$.mobile.changePage($("#restaurants"));

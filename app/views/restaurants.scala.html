@@ -9,24 +9,42 @@
 	<script data-main="@routes.Assets.at("javascripts/app.js")" src="@routes.Assets.at("javascripts/require.js")"></script>
 </head>
 <body>
+
 <div data-role="page" id="restaurants">
 	<div data-role="header">
 		<h1>USF Restaurants</h1>
 	</div>
 	<div data-role="content">
-		<ul data-role="listview">
+		<!-- ko if: false -->
+		<p>
+			ko if not working.
+		</p>
+		<!-- /ko -->
+		<ul data-role="listview" data-split-icon="delete">
 			<li data-role="list-divider">Open</li>
 			<!-- ko foreach: open -->
-				<li><a data-bind="attr: {href: '#!restaurants/' + $data.id}, text: $data.name"></a></li>
+				<li data-bind="ifnot: $parent.user().admin">
+					<a data-bind="attr: {href: '#!restaurants/' + $data.id}, text: $data.name"></a>
+				</li>
+				<li data-bind="if: $parent.user().admin">
+					<a data-bind="attr: {href: '#!restaurants/' + $data.id}, text: $data.name"></a>
+					<a href="#" data-bind="click: $parent.deleteRestaurant($data.id)">Delete restaurant</a>
+				</li>
 			<!-- /ko -->
 			<li data-role="list-divider">Closed</li>
 			<!-- ko foreach: closed -->
-				<li><a data-bind="attr: {href: '#!restaurants/' + $data.id}, text: $data.name"></a></li>
+				<li data-bind="ifnot: $parent.user().admin">
+					<a data-bind="attr: {href: '#!restaurants/' + $data.id}, text: $data.name"></a>
+				</li>
+				<li data-bind="if: $parent.user().admin">
+					<a data-bind="attr: {href: '#!restaurants/' + $data.id}, text: $data.name"></a>
+					<a href="#" data-bind="click: $parent.deleteRestaurant($data.id)">Delete restaurant</a>
+				</li>
 			<!-- /ko -->
 		</ul>
 	</div>
 	<div data-role="footer" class="ui-bar">
-		<a href="#!signin" data-role="button" data-icon="gear">Admin sign in</a>
+		<a data-bind="visible: !user().email" href="#!signin" data-role="button" data-icon="gear">Admin sign in</a> <a data-bind="visible: user().email, click: signOut" data-role="button">Sign out</a>
 	</div>
 </div>
 
