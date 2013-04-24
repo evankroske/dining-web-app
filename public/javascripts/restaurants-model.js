@@ -22,7 +22,7 @@ function($, RestaurantViewModel) {
 						valid = true;
 					}).promise();
 			}
-		}
+		};
 
 		self.restaurantById = function (id) {
 			if (typeof cache[id] === "undefined") {
@@ -35,6 +35,17 @@ function($, RestaurantViewModel) {
 			else {
 				return $.Deferred().resolve(cache[id]).promise();
 			}
-		}
+		};
+
+		self.remove = function (r) {
+			return $.ajax({
+				type: "delete",
+				url: "/api/usf/restaurants/" + r.id,
+			}).done(function () {
+				delete cache[r.id];
+			}).fail(function () {
+				console.log(arguments);
+			});
+		};
 	});
 });

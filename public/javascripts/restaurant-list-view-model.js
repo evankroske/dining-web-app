@@ -30,8 +30,10 @@ define(["knockout", "restaurant-view-model"], function (ko, RestaurantViewModel)
 			userModel.signOut();
 		};
 
-		self.deleteRestaurant = function (id) {
-			return;
+		self.deleteRestaurant = function (r) {
+			self.restaurants.remove(r);
+			restaurantsModel.remove(r);
+			console.log(r.id + " deleted");
 		};
 	});
 });

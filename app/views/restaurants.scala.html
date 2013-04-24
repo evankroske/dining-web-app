@@ -28,7 +28,7 @@
 				</li>
 				<li data-bind="if: $parent.user().admin">
 					<a data-bind="attr: {href: '#!restaurants/' + $data.id}, text: $data.name"></a>
-					<a href="#" data-bind="click: $parent.deleteRestaurant($data.id)">Delete restaurant</a>
+					<a href="#" data-bind="click: $parent.deleteRestaurant">Delete restaurant</a>
 				</li>
 			<!-- /ko -->
 			<li data-role="list-divider">Closed</li>
@@ -38,7 +38,7 @@
 				</li>
 				<li data-bind="if: $parent.user().admin">
 					<a data-bind="attr: {href: '#!restaurants/' + $data.id}, text: $data.name"></a>
-					<a href="#" data-bind="click: $parent.deleteRestaurant($data.id)">Delete restaurant</a>
+					<a href="#" data-bind="click: $parent.deleteRestaurant">Delete restaurant</a>
 				</li>
 			<!-- /ko -->
 		</ul>

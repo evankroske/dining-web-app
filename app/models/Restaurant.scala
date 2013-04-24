@@ -6,6 +6,7 @@ import play.api.db._
 import play.api.Play.current
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
+import play.api.Logger
 
 import scala.collection.immutable.BitSet
 
@@ -54,5 +55,12 @@ object Restaurant {
 		SQL("""select id, name, hours::char(336)
 		from restaurants where id = {id}""").on("id" -> id).
 			as(ResultSetParser.singleOpt(restaurant))
+	}
+
+	def delete(id: Int) = DB.withConnection { implicit connection =>
+		Logger.debug("Deleting restaurant %d".format(id))
+		SQL("""delete from restaurants
+			where id = {id}""").on("id" -> id).execute()
+		Logger.debug("Deleted restaurant %d".format(id))
 	}
 }
