@@ -54,8 +54,8 @@
 		<h1 data-bind="text: loaded() ? restaurant.name() : 'Loading...'"></h1>
 	</div>
 	<div data-role="content">
-		<ul data-bind="foreach: loaded() ? restaurant.prettyHours : []">
-			<li data-bind="text: $data"></li>
+		<ul data-bind="foreach: (loaded() ? ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] : [])">
+			<li data-bind="text: $data + ': ' + $parent.restaurant.prettyHours[$index()]()"></li>
 		</ul>
 	</div>
 </div>
