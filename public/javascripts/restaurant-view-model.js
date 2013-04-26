@@ -118,6 +118,13 @@ define(["knockout", "moment"], function(ko, moment) {
 			}
 			return hoursByDay;
 		})();
+		self.toJSON = function () {
+			return ({
+				id: self.id,
+				name: self.name(),
+				hours: self.hours()
+			});
+		};
 	}
 	return RestaurantViewModel;
 });

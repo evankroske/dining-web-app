@@ -47,5 +47,18 @@ function($, RestaurantViewModel) {
 				console.log(arguments);
 			});
 		};
+
+		self.update = function (r) {
+			return $.ajax({
+				type: "put",
+				url: "/api/usf/restaurants/" + r.id,
+				contentType: "application/json",
+				data: JSON.stringify(r)
+			}).done(function () {
+				cache[r.id] = r;
+			}).fail(function () {
+				console.log(arguments);
+			});
+		};
 	});
 });

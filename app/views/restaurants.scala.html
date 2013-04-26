@@ -10,33 +10,28 @@
 </head>
 <body>
 
-<div data-role="page" id="restaurants">
+<div data-role="page" id="restaurants" data-bind="with: restaurantList">
 	<div data-role="header">
 		<h1>USF Restaurants</h1>
 	</div>
 	<div data-role="content">
-		<!-- ko if: false -->
-		<p>
-			ko if not working.
-		</p>
-		<!-- /ko -->
 		<ul data-role="listview" data-split-icon="delete">
 			<li data-role="list-divider">Open</li>
 			<!-- ko foreach: open -->
-				<li data-bind="ifnot: $parent.user().admin">
+				<li data-bind="ifnot: $root.user.user().admin">
 					<a data-bind="attr: {href: '#!restaurants/' + $data.id}, text: $data.name"></a>
 				</li>
-				<li data-bind="if: $parent.user().admin">
+				<li data-bind="if: $root.user.user().admin">
 					<a data-bind="attr: {href: '#!restaurants/' + $data.id}, text: $data.name"></a>
 					<a href="#" data-bind="click: $parent.deleteRestaurant">Delete restaurant</a>
 				</li>
 			<!-- /ko -->
 			<li data-role="list-divider">Closed</li>
 			<!-- ko foreach: closed -->
-				<li data-bind="ifnot: $parent.user().admin">
+				<li data-bind="ifnot: $root.user.user().admin">
 					<a data-bind="attr: {href: '#!restaurants/' + $data.id}, text: $data.name"></a>
 				</li>
-				<li data-bind="if: $parent.user().admin">
+				<li data-bind="if: $root.user.user().admin">
 					<a data-bind="attr: {href: '#!restaurants/' + $data.id}, text: $data.name"></a>
 					<a href="#" data-bind="click: $parent.deleteRestaurant">Delete restaurant</a>
 				</li>
@@ -44,23 +39,25 @@
 		</ul>
 	</div>
 	<div data-role="footer" class="ui-bar">
-		<a data-bind="visible: !user().email" href="#!signin" data-role="button" data-icon="gear">Admin sign in</a> <a data-bind="visible: user().email, click: signOut" data-role="button">Sign out</a>
+		<a data-bind="visible: !$root.user.user().email" href="#!signin" data-role="button" data-icon="gear">Admin sign in</a> <a data-bind="visible: $root.user.user().email, click: $root.user.signOut" data-role="button">Sign out</a>
 	</div>
 </div>
 
-<div data-role="page" id="details">
+<div data-role="page" id="details" data-bind="with: restaurantDetails">
 	<div data-role="header">
 		<a href="#!restaurants" data-icon="arrow-l">All</a>
-		<h1 data-bind="text: loaded() ? restaurant.name() : 'Loading...'"></h1>
+		<h1 data-bind="text: loaded() ? (($root.user.user().admin ? 'Editing ' : '') + restaurant().name()) : 'Loading...'"></h1>
+		<a href="#" data-bind="if: $root.user.user().admin, click: save">Save</a>
 	</div>
-	<div data-role="content">
-		<ul data-bind="foreach: (loaded() ? ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] : [])">
-			<li data-bind="text: $data + ': ' + $parent.restaurant.prettyHours[$index()]()"></li>
+	<div data-role="content" data-bind="with: restaurant">
+		<input type="text" data-bind="if: $root.user.user().admin, value: name" />
+		<ul data-bind="foreach: (['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'])">
+			<li data-bind="text: $data + ': ' + $parent.prettyHours[$index()]()"></li>
 		</ul>
 	</div>
 </div>
 
-<div data-role="dialog" id="signin" data-close-btn="none">
+<div data-role="dialog" id="signin" data-close-btn="none" data-bind="with: signInPage">
 	<div data-role="header">
 		<h1>Sign in</h1>
 	</div>
