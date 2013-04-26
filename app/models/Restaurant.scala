@@ -10,7 +10,14 @@ import play.api.Logger
 
 import scala.collection.immutable.BitSet
 
-case class Restaurant(val id: Int, val name: String, val hours: BitSet)
+case class Restaurant(val id: Int, val name: String, val hours: BitSet) {
+	def toSqlParameters() = {
+		getClass.getDeclaredFields.map { f =>
+			f.setAccessible(true)
+			f.getName -> f.get(this): (String, ParameterValue[_])
+		}
+	}
+}
 
 object Restaurant {
 	val bitSetReads: Reads[BitSet] = __.read[Seq[Int]].map[Array[Long]] { l =>
@@ -62,5 +69,15 @@ object Restaurant {
 		SQL("""delete from restaurants
 			where id = {id}""").on("id" -> id).execute()
 		Logger.debug("Deleted restaurant %d".format(id))
+	}
+
+	def update(r: Restaurant) = DB.withConnection { implicit connection =>
+		SQL("""
+			update restaurants
+			set name = {name}, hours = {hours}::bit(336)
+			where id = {id}
+		""").on("id" -> r.id, "name" -> r.name, "hours" -> (0 until 336).map { i =>
+			if (r.hours.contains(i)) '1' else '0'
+		}.mkString).executeUpdate()
 	}
 }

@@ -50,7 +50,7 @@
 		<a href="#" data-bind="if: $root.user.user().admin, click: save">Save</a>
 	</div>
 	<div data-role="content" data-bind="with: restaurant">
-		<input type="text" data-bind="if: $root.user.user().admin, value: name" />
+		<span data-bind="if: $root.user.user().admin"><input type="text" data-bind="value: name" /></span>
 		<ul data-bind="foreach: (['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'])">
 			<li data-bind="text: $data + ': ' + $parent.prettyHours[$index()]()"></li>
 		</ul>

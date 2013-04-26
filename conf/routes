@@ -8,6 +8,7 @@ GET	/usf/restaurants/	controllers.Application.restaurants
 GET	/api/usf/restaurants	controllers.Api.restaurants
 
 GET	/api/usf/restaurants/:id	controllers.Api.restaurant(id: Int)
+PUT	/api/usf/restaurants/:id	controllers.Api.updateRestaurant(id: Int)
 DELETE	/api/usf/restaurants/:id	controllers.Api.deleteRestaurant(id: Int)
 
 POST	/api/authenticate controllers.Api.authenticate

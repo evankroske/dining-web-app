@@ -14,7 +14,9 @@ function (ko, $) {
 			});
 		});
 		self.save = function () {
-			restaurantsModel.update(self.restaurant());
+			restaurantsModel.update(self.restaurant()).fail(function (error) {
+				$(document.body).html(error.responseText);
+			});
 		};
 	});
 });

@@ -27,6 +27,28 @@ object Api extends Controller {
 		} getOrElse Unauthorized("Not authenticated. Sign in please")
 	}
 
+	def updateRestaurant(id: Int) = Action(parse.json) { request =>
+		request.session.get("admin").collect {
+			case "true" => {
+				request.body.validate[Restaurant].fold(
+					errors => BadRequest("fail"),
+					restaurant => if (restaurant.id == id) {
+							if (Restaurant.update(restaurant) > 0) {
+								Logger.debug("Restaurant %d updated".format(id))
+								Ok("Restaurant %d updated".format(id))
+							}
+							else {
+								NotFound("No restaurant with id %d".format(id))
+							}
+						}
+						else {
+							BadRequest("id must match")
+						}
+				)
+			}
+			case _ => Forbidden("Not authorized")
+		} getOrElse Unauthorized("Not authenticated. Sign in please")
+	}
 	def authenticate() = Action(parse.json) { request =>
 		request.body.validate[User].fold(
 			errors => BadRequest("Fail"),
